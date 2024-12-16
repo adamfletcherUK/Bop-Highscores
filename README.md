@@ -1,39 +1,63 @@
-# Pinball High Scores
+# Bop Highscores
 
-A web application for tracking and displaying pinball high scores.
+A FastAPI-based web application for tracking pinball high scores with profanity filtering.
 
 ## Features
 
-- Submit new high scores with player names
-- Display top 10 high scores
-- Automatic updates every 30 seconds
-- Clean and modern UI
-- Mobile-responsive design
+- Track and display pinball high scores
+- Profanity filtering for player names
+- Real-time score updates
+- Clean, modern interface
+- Admin authentication for data management
 
 ## Setup
 
-1. Install the required dependencies:
-```bash
-pip install -r requirements.txt
-```
+1. **Create, activate, and setup virtual environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
 
-2. Run the application:
-```bash
-uvicorn app:app --reload --port 8080
-```
+2. **Set up environment variables**
+   Create a `.env` file in the root directory with:
+   ```
+   ADMIN_USERNAME=your_admin_username
+   ADMIN_PASSWORD=your_admin_password
+   ```
 
-3. Open your web browser and navigate to `http://localhost:8080`
+3. **Run the application**
+   ```bash
+   uvicorn app:app --reload --port 8080
+   ```
 
-## Technical Details
-
-- Backend: FastAPI with SQLite database
-- Frontend: HTML, CSS (Bootstrap), and JavaScript
-- Data is stored in a local SQLite database (`highscores.db`)
-- API Documentation available at `http://localhost:8080/docs`
+   The app will be available at `http://localhost:8080`
 
 ## Usage
 
-1. Enter your name and score in the form on the left
-2. Click "Submit Score" to add your score to the database
-3. The top 10 scores will be displayed on the right
-4. Scores are automatically refreshed every 30 seconds
+- **View High Scores**: Visit the homepage to see the current high scores
+- **Submit Score**: Enter player name and score in the submission form
+- **Admin Access**: Use `/admin` endpoint with your credentials to manage scores
+
+## Development
+
+- The application uses SQLite for data storage
+- FastAPI for the backend API
+- Basic authentication for admin access
+- Better-profanity for filtering inappropriate usernames
+
+## Requirements
+
+- Python 3.11+
+- FastAPI
+- SQLAlchemy
+- Better-profanity
+- Python-dotenv
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
