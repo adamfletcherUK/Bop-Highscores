@@ -249,13 +249,17 @@ async def logout():
 @app.get("/qr")
 async def get_qr():
     hostname = os.getenv('HOSTNAME', 'localhost:8080')
+    # Remove any www. prefix if present
+    if hostname.startswith('www.'):
+        hostname = hostname[4:]
+    
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
         box_size=10,
         border=4,
     )
-    qr.add_data(f"http://{hostname}/add")
+    qr.add_data(f"http://{hostname}:8080/add")
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
