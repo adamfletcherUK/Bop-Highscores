@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bride of Pinbot - High Scores</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', path='favicon.ico') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -34,8 +37,8 @@
             font-weight: 700;
             color: var(--neon-blue);
             text-shadow: 0 0 10px var(--neon-blue),
-                         0 0 20px var(--neon-blue),
-                         0 0 30px var(--neon-blue);
+                0 0 20px var(--neon-blue),
+                0 0 30px var(--neon-blue);
             margin-bottom: 0.5rem;
         }
 
@@ -249,21 +252,33 @@
             animation: errorPulse 2s infinite;
             margin: 10px 0;
         }
-        
+
         @keyframes errorPulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
             .main-title {
                 font-size: 1.8rem;
             }
+
             .subtitle {
                 font-size: 1rem;
             }
-            .form-control, .form-label, .table tbody td {
+
+            .form-control,
+            .form-label,
+            .table tbody td {
                 font-size: 1rem;
             }
         }
@@ -273,12 +288,12 @@
                 max-width: 95%;
                 padding: 1rem 2rem;
             }
-            
+
             .score-input-column {
                 flex: 0 0 auto;
                 width: 380px;
             }
-            
+
             .highscore-column {
                 flex: 1 1 auto;
                 max-width: calc(100% - 400px);
@@ -291,20 +306,21 @@
                 margin-bottom: 2rem;
                 width: 100%;
             }
-            
+
             .highscore-column {
                 width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="title-container">
             <h1 class="main-title">The Machine</h1>
             <div class="subtitle">Bride of Pin•Bot</div>
         </div>
-        
+
         <div class="row">
             <div class="score-input-column">
                 <div class="score-card">
@@ -312,14 +328,20 @@
                     <form id="scoreForm">
                         <div class="mb-3">
                             <label for="name" class="form-label">Player Name</label>
-                            <input type="text" class="form-control" id="name" required maxlength="50" placeholder="Type your name here">
+                            <input type="text" class="form-control" id="name" required maxlength="50"
+                                placeholder="Type your name here">
                         </div>
                         <div class="mb-3">
                             <label for="score" class="form-label">Final Score</label>
-                            <input type="number" class="form-control" id="score" required min="0" placeholder="Type your score here">
+                            <input type="number" class="form-control" id="score" required min="0"
+                                placeholder="Type your score here">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Record Score</button>
                     </form>
+                    <div class="mt-4 text-center">
+                        <p class="qr-text">Quick Submit Score</p>
+                        <img src="/qr" alt="QR Code" class="img-fluid" style="max-width: 200px;">
+                    </div>
                 </div>
 
                 <div class="score-card">
@@ -327,17 +349,18 @@
                     <form id="searchForm">
                         <div class="mb-3">
                             <label for="searchName" class="form-label">Player Name</label>
-                            <input type="text" class="form-control" id="searchName" required placeholder="Type player name to search">
+                            <input type="text" class="form-control" id="searchName" required
+                                placeholder="Type player name to search">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">View Stats</button>
                     </form>
                 </div>
             </div>
-            
+
             <div class="highscore-column">
                 <div class="score-card">
                     <h3>Grand Masters</h3>
-                    <table class="table">
+                    <table id="scoreTable" class="table">
                         <thead>
                             <tr>
                                 <th style="width: 50px"></th>
@@ -345,7 +368,7 @@
                                 <th>Score</th>
                             </tr>
                         </thead>
-                        <tbody id="scoresList">
+                        <tbody>
                         </tbody>
                     </table>
                 </div>
@@ -363,94 +386,20 @@
         </p>
     </footer>
 
+    <script src="{{ url_for('static', path='js/scores.js') }}"></script>
     <script>
-        async function loadScores() {
-            try {
-                const response = await fetch('/api/scores');
-                const scores = await response.json();
-                const scoresList = document.getElementById('scoresList');
-                scoresList.innerHTML = '';
-                scores.forEach((score, index) => {
-                    const row = document.createElement('tr');
-                    const nameCell = document.createElement('td');
-                    const nameLink = document.createElement('a');
-                    nameLink.href = `/player/${encodeURIComponent(score.name)}`;
-                    nameLink.textContent = score.name;
-                    nameCell.appendChild(nameLink);
-                    
-                    row.innerHTML = `
-                        <td>#${index + 1}</td>
-                    `;
-                    row.appendChild(nameCell);
-                    row.innerHTML += `
-                        <td>${score.score.toLocaleString()}</td>
-                    `;
-                    if (index < 3) row.classList.add('highlight');
-                    scoresList.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error loading scores:', error);
+        // Load scores on page load
+        window.onload = async function () {
+            await loadScores();
+            const nameInput = document.getElementById('name');
+            if (nameInput) {
+                nameInput.focus();
             }
-        }
+        };
 
-        document.getElementById('scoreForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const score = parseInt(document.getElementById('score').value);
-            const submission_time = new Date().toISOString();
-
-            try {
-                const response = await fetch('/api/scores', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        name, 
-                        score,
-                        submission_time 
-                    })
-                });
-                
-                if (!response.ok) {
-                    const data = await response.json();
-                    const errorDiv = document.createElement('div');
-                    errorDiv.className = 'error-message';
-                    
-                    if (data.detail && data.detail.error_type === 'profanity') {
-                        errorDiv.innerHTML = '❌ Please choose a nice player name';
-                    } else {
-                        errorDiv.textContent = '❌ Error submitting score';
-                    }
-                    
-                    const form = document.querySelector('form');
-                    // Remove any existing error messages
-                    const existingError = form.querySelector('.error-message');
-                    if (existingError) {
-                        existingError.remove();
-                    }
-                    form.insertBefore(errorDiv, form.firstChild);
-                    
-                    // Automatically remove the error message after 5 seconds
-                    setTimeout(() => {
-                        errorDiv.remove();
-                    }, 5000);
-                    
-                    return;
-                }
-                
-                if (response.ok) {
-                    await loadScores();
-                    document.getElementById('scoreForm').reset();
-                } else {
-                    console.error('Error submitting score:', await response.text());
-                }
-            } catch (error) {
-                console.error('Error submitting score:', error);
-            }
-        });
-
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
+        // Add form submission event listeners
+        document.getElementById('scoreForm').addEventListener('submit', submitScore);
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const name = document.getElementById('searchName').value.trim();
             if (name) {
@@ -458,10 +407,35 @@
             }
         });
 
-        // Load scores initially
-        loadScores();
-        // Refresh scores every 30 seconds
+        // Auto-refresh scores every 30 seconds
         setInterval(loadScores, 30000);
+
+        async function loadScores() {
+            try {
+                const response = await fetch('/api/scores');
+                const scores = await response.json();
+                updateScoreTable(scores);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateScoreTable(scores) {
+            const tbody = document.querySelector('#scoreTable tbody');
+            tbody.innerHTML = '';
+
+            scores.forEach((score, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${score.name}</td>
+                    <td>${score.score}</td>
+                `;
+                if (index < 3) row.classList.add('highlight');
+                tbody.appendChild(row);
+            });
+        }
     </script>
 </body>
+
 </html>

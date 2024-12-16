@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Score - Bride of Pinbot</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', path='favicon.ico') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff0099;
+            --dark-purple: #1a0933;
+            --cyber-blue: #0b1c3d;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-purple), var(--cyber-blue));
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue),
+                         0 0 20px var(--neon-blue),
+                         0 0 30px var(--neon-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .score-card {
+            background: rgba(11, 28, 61, 0.8);
+            border: 2px solid var(--neon-blue);
+            border-radius: 15px;
+            box-shadow: 0 0 15px var(--neon-blue);
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .score-card h3 {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            opacity: 1;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--neon-pink);
+            color: white;
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .form-control:focus::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-label {
+            color: var(--neon-blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--neon-pink);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--neon-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .error-message {
+            color: #ff3333;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.7);
+            animation: errorPulse 2s infinite;
+            margin: 10px 0;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 51, 51, 0.1);
+        }
+
+        @keyframes errorPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 243, 255, 0.9);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            animation: fadeOut 2s forwards;
+            animation-delay: 1s;
+            display: none;
+            box-shadow: 0 0 20px var(--neon-blue);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8rem;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-container">
+            <h1 class="main-title">BRIDE OF PINBOT</h1>
+        </div>
+        <div class="score-card">
+            <h3>QUICK SCORE ENTRY</h3>
+            <form id="quickScoreForm" onsubmit="submitScore(event)">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Player Name</label>
+                    <input type="text" class="form-control" id="name" required maxlength="20" pattern="[A-Za-z0-9\s_-]*" title="Only letters, numbers, spaces, underscores, and hyphens allowed" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                    <label for="score" class="form-label">Score</label>
+                    <input type="number" class="form-control" id="score" required min="0" autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-primary">RECORD SCORE</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="successMessage" class="success-message">
+        Score Recorded!
+    </div>
+
+    <script src="{{ url_for('static', path='js/scores.js') }}"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, HTTPException, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, Request, HTTPException, Depends, status
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -12,16 +12,26 @@ from better_profanity import profanity
 import os
 import secrets
 from dotenv import load_dotenv
+import qrcode
+from io import BytesIO
 
 # Load environment variables
 load_dotenv()
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+HOSTNAME = os.getenv("HOSTNAME", "localhost")
 
 # Configure profanity filter
 profanity.load_censor_words()
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+
+# Mount static files directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Configure templates
+templates = Jinja2Templates(directory="templates")
+
 security = HTTPBasic()
 
 # Database setup
@@ -202,6 +212,10 @@ def add_score(score: ScoreCreate):
     db.close()
     return {"message": "Score added successfully"}
 
+@app.get("/add", response_class=HTMLResponse)
+async def add_score_page(request: Request):
+    return templates.TemplateResponse("add.html", {"request": request})
+
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_page(request: Request, credentials: HTTPBasicCredentials = Depends(verify_admin)):
     db = SessionLocal()
@@ -232,6 +246,27 @@ async def logout():
     response.status_code = 401
     return response
 
+@app.get("/qr")
+async def get_qr():
+    hostname = os.getenv('HOSTNAME', 'localhost:8080')
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(f"http://{hostname}/add")
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Save to bytes
+    img_byte_arr = BytesIO()
+    img.save(img_byte_arr, format='PNG')
+    img_byte_arr.seek(0)
+    
+    return StreamingResponse(img_byte_arr, media_type="image/png")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    uvicorn.run(app, host=HOSTNAME, port=8080)

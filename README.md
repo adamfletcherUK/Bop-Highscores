@@ -24,14 +24,21 @@ A FastAPI-based web application for tracking pinball high scores with profanity 
    ```
    ADMIN_USERNAME=your_admin_username
    ADMIN_PASSWORD=your_admin_password
+   HOSTNAME=your_hostname
    ```
 
 3. **Run the application**
    ```bash
-   uvicorn app:app --reload --port 8080
+   python app.py
    ```
 
-   The app will be available at `http://localhost:8080`
+   The app will be available at:
+   - Locally: `http://localhost:8080`
+   - Other devices: `http://<HOSTNAME>:8080` (e.g., `http://Adams-MacBook-Pro-2.local:8080`)
+
+   To find your computer's IP address:
+   - Mac/Linux: Run `ifconfig` in terminal
+   - Windows: Run `ipconfig` in command prompt
 
 ## Usage
 
