@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bride of Pinbot - High Scores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff0099;
+            --dark-purple: #1a0933;
+            --cyber-blue: #0b1c3d;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-purple), var(--cyber-blue));
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .title-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue),
+                         0 0 20px var(--neon-blue),
+                         0 0 30px var(--neon-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--neon-pink);
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .score-card {
+            background: rgba(11, 28, 61, 0.8);
+            border: 2px solid var(--neon-blue);
+            border-radius: 15px;
+            box-shadow: 0 0 15px var(--neon-blue);
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .score-card h3 {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .table {
+            color: white;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin: 0;
+        }
+
+        /* Override Bootstrap's default table styles */
+        .table>:not(caption)>*>* {
+            background-color: transparent;
+            color: white;
+            border-bottom: none;
+            box-shadow: none;
+            padding: 1rem;
+        }
+
+        .table thead th {
+            border: none;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            padding: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            background: transparent;
+        }
+
+        .table thead th:first-child {
+            width: 50px;
+            padding-right: 0;
+        }
+
+        .table thead th:nth-child(2) {
+            width: 60%;
+        }
+
+        .table tbody tr {
+            background: rgba(0, 243, 255, 0.05);
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .table tbody tr:hover {
+            transform: scale(1.02);
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            border: none;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            color: white;
+            background: transparent !important;
+        }
+
+        .table tbody td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            width: 50px;
+            padding-right: 0;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .table tbody td:nth-child(2) {
+            padding-left: 0.5rem;
+        }
+
+        .table tbody td a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .table tbody td a:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .table tbody td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .highlight {
+            background: rgba(255, 0, 153, 0.15) !important;
+        }
+
+        .highlight:hover {
+            background: rgba(255, 0, 153, 0.2) !important;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            opacity: 1;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--neon-pink);
+            color: white;
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .form-control:focus::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-label {
+            color: var(--neon-blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--neon-pink);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            background: var(--neon-blue);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .container {
+            padding: 1rem;
+        }
+
+        .footer {
+            margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .footer p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .footer .divider {
+            color: rgba(255, 255, 255, 0.3);
+            margin: 0 0.5rem;
+        }
+
+        .error-message {
+            color: #ff3333;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.7);
+            animation: errorPulse 2s infinite;
+            margin: 10px 0;
+        }
+        
+        @keyframes errorPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .form-control, .form-label, .table tbody td {
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 95%;
+                padding: 1rem 2rem;
+            }
+            
+            .score-input-column {
+                flex: 0 0 auto;
+                width: 380px;
+            }
+            
+            .highscore-column {
+                flex: 1 1 auto;
+                max-width: calc(100% - 400px);
+                margin-left: 20px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .score-input-column {
+                margin-bottom: 2rem;
+                width: 100%;
+            }
+            
+            .highscore-column {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-container">
+            <h1 class="main-title">The Machine</h1>
+            <div class="subtitle">Bride of Pin•Bot</div>
+        </div>
+        
+        <div class="row">
+            <div class="score-input-column">
+                <div class="score-card">
+                    <h3>Submit Your Score</h3>
+                    <form id="scoreForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Player Name</label>
+                            <input type="text" class="form-control" id="name" required maxlength="50" placeholder="Type your name here">
+                        </div>
+                        <div class="mb-3">
+                            <label for="score" class="form-label">Final Score</label>
+                            <input type="number" class="form-control" id="score" required min="0" placeholder="Type your score here">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Record Score</button>
+                    </form>
+                </div>
+
+                <div class="score-card">
+                    <h3>Find Player Stats</h3>
+                    <form id="searchForm">
+                        <div class="mb-3">
+                            <label for="searchName" class="form-label">Player Name</label>
+                            <input type="text" class="form-control" id="searchName" required placeholder="Type player name to search">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">View Stats</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="highscore-column">
+                <div class="score-card">
+                    <h3>Grand Masters</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px"></th>
+                                <th>Name</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoresList">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>
+            Created by Adam Fletcher
+            <span class="divider">|</span>
+            <a href="/admin">Admin</a>
+            <span class="divider">|</span>
+            <span> 2024</span>
+        </p>
+    </footer>
+
+    <script>
+        async function loadScores() {
+            try {
+                const response = await fetch('/api/scores');
+                const scores = await response.json();
+                const scoresList = document.getElementById('scoresList');
+                scoresList.innerHTML = '';
+                scores.forEach((score, index) => {
+                    const row = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    const nameLink = document.createElement('a');
+                    nameLink.href = `/player/${encodeURIComponent(score.name)}`;
+                    nameLink.textContent = score.name;
+                    nameCell.appendChild(nameLink);
+                    
+                    row.innerHTML = `
+                        <td>#${index + 1}</td>
+                    `;
+                    row.appendChild(nameCell);
+                    row.innerHTML += `
+                        <td>${score.score.toLocaleString()}</td>
+                    `;
+                    if (index < 3) row.classList.add('highlight');
+                    scoresList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading scores:', error);
+            }
+        }
+
+        document.getElementById('scoreForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const score = parseInt(document.getElementById('score').value);
+            const submission_time = new Date().toISOString();
+
+            try {
+                const response = await fetch('/api/scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        name, 
+                        score,
+                        submission_time 
+                    })
+                });
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    
+                    if (data.detail && data.detail.error_type === 'profanity') {
+                        errorDiv.innerHTML = '❌ Please choose a nice player name';
+                    } else {
+                        errorDiv.textContent = '❌ Error submitting score';
+                    }
+                    
+                    const form = document.querySelector('form');
+                    // Remove any existing error messages
+                    const existingError = form.querySelector('.error-message');
+                    if (existingError) {
+                        existingError.remove();
+                    }
+                    form.insertBefore(errorDiv, form.firstChild);
+                    
+                    // Automatically remove the error message after 5 seconds
+                    setTimeout(() => {
+                        errorDiv.remove();
+                    }, 5000);
+                    
+                    return;
+                }
+                
+                if (response.ok) {
+                    await loadScores();
+                    document.getElementById('scoreForm').reset();
+                } else {
+                    console.error('Error submitting score:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error submitting score:', error);
+            }
+        });
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('searchName').value.trim();
+            if (name) {
+                window.location.href = `/player/${encodeURIComponent(name)}`;
+            }
+        });
+
+        // Load scores initially
+        loadScores();
+        // Refresh scores every 30 seconds
+        setInterval(loadScores, 30000);
+    </script>
+</body>
+</html>
